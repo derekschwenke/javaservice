@@ -4,8 +4,6 @@ JDBC to SOAP Java Service
 The e-VA Integration IN Process Java Service of the
 Executive Virtual Assistant (e-VA) Integration Project.  This Java process bridges between the corp DB e-VA tables and the BGS SOAP Service. 
 
-This README and code is under development.
-
 See Specs:
     TBD
 
@@ -14,34 +12,35 @@ JavaService
 --------------
 
 Input:
-- JDBC PL-SQL is input (triggered) from corp DB
+- JDBC PL-SQL triggers on changes
 - Configuration file _eva.config_
+- Soap template file _templaste_update.xml_
+
       
 Output:
 - SOAP is sent to BGS Services
-- LOG messages written to a file
+- LOG messages written to _eVA.log_ file
 
-Structure:
+Code structure:
+- JavaService.java manages the service and log files.
+- CaseNote.java contains the data being sent
 - Configuration.java keeps the configuration values up to date
 - JDBCService.java registers callbacks and waits for events
 - SOAPClient.java sends updates and bla bla bla.
 
-Requirements: TBD
+Requirements: ... Java 1.8
 
 JavaService Command Line
 ======================
 
 NAME
 
-    JavaService - Start serving sql to bgs!
+    JavaService - transform sql to bgs soap protocol
 
 SYNOPSIS
 
     java javaService [...] 
 
-OPTIONS
-
-   see eva.config file
 
 HOW TO RUN: (tbd)
 1. Clean up old .log and .soap files
@@ -50,6 +49,31 @@ HOW TO RUN: (tbd)
 3. Start Oracle server
 4. Start JavaService 
 
+INPUT: _template_update.xml_ omitted
+
+INPUT: _test/case_notes.txt_
+
+    1001 bnftClaimNoteTypeCd 1002 1003 This is the first CaseNote.
+    2001 bnftClaimNoteTypeCd 2002 2003 This is the second CaseNote.
+    3001 bnftClaimNoteTypeCd 3002 3003 This is the third CaseNote Running nose.    
+    
+    
+OUTPUT: _eVA.log_
+
+    Aug 16, 2019 1:45:01 PM gov.va.eva.JavaService log
+    INFO: Java Service version 0.1 starts. configuration version 0.1
+    Aug 16, 2019 1:45:01 PM gov.va.eva.JavaService log
+    INFO: CaseNote 1001 bnftClaimNoteTypeCd 1002 1003 dcmntTxt
+    Aug 16, 2019 1:45:01 PM gov.va.eva.JavaService log
+    INFO: CaseNote 1001 bnftClaimNoteTypeCd 1002 1003 This is the first CaseNote.       
+    Aug 16, 2019 1:45:01 PM gov.va.eva.JavaService log
+    INFO: CaseNote 2001 bnftClaimNoteTypeCd 2002 2003 This is the second CaseNote.
+    Aug 16, 2019 1:45:01 PM gov.va.eva.JavaService log
+    INFO: CaseNote 3001 bnftClaimNoteTypeCd 3002 3003 This is the third CaseNote Running nose.
+    
+    Hit ^C to exit.
+
+OUTPUT: _soap.xml_ omitted 
 
 DESCRIPTION
 
