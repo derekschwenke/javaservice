@@ -1,2 +1,4 @@
 # Project exclude paths
 /out/
+/test/soap.xml
+/template_update.xml

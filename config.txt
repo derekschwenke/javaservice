@@ -1,0 +1,4 @@
+greeting:configuration version 0.1
+bgs-url:http://vbawebservices.vba.va.gov/vawss
+wait:1000
+log:on
