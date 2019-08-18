@@ -28,7 +28,7 @@ Code structure:
 - JDBCService.java registers callbacks and waits for events
 - SOAPClient.java sends updates and bla bla bla.
 
-Requirements: ... Java 1.8
+Requirements: ... Java 1.8 Oracle 18, (or 12?)
 
 JavaService Command Line
 ======================
@@ -45,11 +45,11 @@ SYNOPSIS
 HOW TO RUN: (tbd)
 1. Clean up old .log and .soap files
 1. Ask for the full template_update.xml from derek.
-2. Start BGS server
-3. Start Oracle server
-4. Start JavaService 
+1. Start BGS server
+1. Start Oracle server
+1. Start JavaService 
 
-INPUT: _template_update.xml_ omitted
+INPUT: _template_update.xml_ omitted for security
 
 INPUT: _test/case_notes.txt_
 
@@ -57,6 +57,23 @@ INPUT: _test/case_notes.txt_
     2001 bnftClaimNoteTypeCd 2002 2003 This is the second CaseNote.
     3001 bnftClaimNoteTypeCd 3002 3003 This is the third CaseNote Running nose.    
     
+
+OUTPUT: _console_
+
+    Configuration loads config.txt
+    Aug 17, 2019 4:31:53 PM gov.va.eva.JavaService log
+    INFO: Java Service version 0.1 starts. configuration version 0.1
+    Aug 17, 2019 4:31:53 PM gov.va.eva.JavaService log
+    INFO: CaseNote 1001 bnftClaimNoteTypeCd 1002 1003 dcmntTxt
+    Aug 17, 2019 4:31:53 PM gov.va.eva.JavaService log
+    INFO: CaseNote 1001 bnftClaimNoteTypeCd 1002 1003 This is the first CaseNote.
+    Aug 17, 2019 4:31:53 PM gov.va.eva.JavaService log
+    INFO: CaseNote 2001 bnftClaimNoteTypeCd 2002 2003 This is the second CaseNote.
+    Aug 17, 2019 4:31:53 PM gov.va.eva.JavaService log
+    INFO: CaseNote 3001 bnftClaimNoteTypeCd 3002 3003 This is the third CaseNote Running nose.
+    Hit ^C to exit.
+    
+    Process finished with exit code -1
     
 OUTPUT: _eVA.log_
 
@@ -107,6 +124,7 @@ Task Backlog:
         Log PL/SQL and BGS error status [F]
         Build PL/SQL error processor [F]
         Report BGS errors to PL/SQL [F]
+        Report BGS ready to PL/SQL [F]
         Write unit/module/system tests [TNF]
         Release code on GitHub and VA [TNF]
         

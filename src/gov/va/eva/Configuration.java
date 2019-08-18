@@ -11,11 +11,11 @@ import java.util.Properties;
 
 
 public class Configuration {
-    static Configuration theConfiguration;
-    Properties properties = new Properties();
-    File file = null;
-    long nextCheckMS = 0;
-    long lastModified = 0;
+    private static Configuration theConfiguration;
+    private Properties properties = new Properties();
+    private File file = null;
+    private long nextCheckMS = 0;
+    private long lastModified = 0;
 
     public Configuration(String filename){
         theConfiguration = this;
@@ -23,7 +23,7 @@ public class Configuration {
         check();
     }
 
-    public static Configuration get() {
+     static Configuration get() {
         return theConfiguration;
     }
 
@@ -53,13 +53,14 @@ public class Configuration {
     }
 
     // Wrong  typeS simply return Properties
-    public String getString(String key){
+    String getString(String key){
         check();
         return properties.getProperty(key);
     }
 
-    public String getInt(String key){
+    // Not used
+    Integer getInt(String key){
         check();
-        return properties.getProperty(key);
+        return Integer.valueOf(properties.getProperty(key));
     }
 }

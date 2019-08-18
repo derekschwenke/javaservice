@@ -1,5 +1,5 @@
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-<soapenv:Body>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+<soapenv:Body note=" *** This template_update is empty for security. Ask Derek Schwenke for a complete template">
 <CaseDcmntDTO/>
 </soapenv:Body>
 </soapenv:Envelope>

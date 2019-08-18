@@ -14,14 +14,14 @@ import java.util.Scanner;
 
 public class SOAPClient {
     private static JavaService javaService;
-    static final String update_fn = "template_update.xml";
-    static final String out_fn = "test/soap.xml";
-    static final String in_fn = "test/case_notes.txt";
-    Configuration config = Configuration.get();
+    private static final String update_fn = "template_update.xml";
+    private static final String out_fn = "test/soap.xml";
+    private static final String in_fn = "test/case_notes.txt";
+    private final Configuration config = Configuration.get();
 
 
     public SOAPClient(JavaService service) {
-        this.javaService = service;
+        javaService = service;
     }
 
 
@@ -36,7 +36,6 @@ public class SOAPClient {
         wr.flush();
         wr.close();
         String responseStatus = ""; // con.getResponseMessage();
-        System.out.println(responseStatus);
 
         /*
         BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
@@ -55,11 +54,11 @@ https://chillyfacts.com/java-send-soap-xml-request-read-response/            }
     }
 
 
-    public void sendCaseNote(CaseNote note) {
+    void sendCaseNote(CaseNote note) {
         try {
             String template = new String(Files.readAllBytes(Paths.get(update_fn)));
             String request = template.replace("<CaseDcmntDTO/>",note.toCaseDcmntDTO());
-            JavaService.log(note.toString());
+            javaService.log(note.toString());
             Files.write(Paths.get(out_fn), request.getBytes());
             send(note);
         } catch (IOException e) {
@@ -69,26 +68,21 @@ https://chillyfacts.com/java-send-soap-xml-request-read-response/            }
         }
     }
 
-    public void test() {
+    void test() {
         CaseNote note = new CaseNote("1001","bnftClaimNoteTypeCd","1002","1003","dcmntTxt");
-        //System.out.println(note.toString());
         sendCaseNote(note);
         testCaseNotes();
     }
 
     // reads note from lines of file - for testing only the txt can not have \n.
-    public void testCaseNotes() {
+    private void testCaseNotes() {
         try {
             Scanner scan = new Scanner( new File(in_fn) );
 
             while (scan.hasNextLine()) {
                 String[] f = scan.nextLine().split(" ", 5);
-                CaseNote cn = new CaseNote(f[0],f[1],f[2],f[3],f[4]);
-
-                //System.out.println(cn.toString());
-                //JavaService.log( cn.toString() );
-                // do something more  send()
-                sendCaseNote(cn);
+                CaseNote note = new CaseNote(f[0], f[1], f[2], f[3], f[4]);
+                sendCaseNote(note);
             }
         } catch (IOException e) {
             e.printStackTrace();

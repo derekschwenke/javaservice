@@ -12,11 +12,11 @@ public class JDBCService {
     private static JavaService javaService;
 
     public JDBCService(JavaService service) {
-        this.javaService = service;
+        javaService = service;
     }
 
     public static void insertCaseNote(int caseDcmntId) throws SQLException {
-        JavaService.log("STORED PROCEDURE HAS BEEN WAS CALLED caseDcmntId = " + caseDcmntId);
+        javaService.log("STORED PROCEDURE HAS BEEN WAS CALLED caseDcmntId = " + caseDcmntId);
         CaseNote note = new CaseNote(String.valueOf(caseDcmntId), "TYPE", "4000", "4000", "dcmntTxt for the case note.");
         javaService.log(note.toString());
         javaService.receive(note);
@@ -26,7 +26,7 @@ public class JDBCService {
     }
 }
 
-/*
+/* IN Oracle
 
 CREATE OR REPLACE PROCEDURE insert_case_note (
  emp_id NUMBER

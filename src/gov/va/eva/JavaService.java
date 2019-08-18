@@ -19,7 +19,7 @@ public class JavaService {
         this.soap = new SOAPClient(this);
         this.jdbc = new JDBCService(this);
 
-        // Run Optional tests
+        // Run tests
         soap.test();
 
         // Loop until ^C Exit
@@ -39,7 +39,7 @@ public class JavaService {
         soap.sendCaseNote(note);
     }
 
-    /* Logging */
+    /* Logging is based on java lagger but may be replaced or moved - - - - - - - - - - - - - - */
     private static void logInit() {
         try {
             Handler fh = new FileHandler("eVA.log", false);  // append is true  %t/ temp %h ?
@@ -51,11 +51,11 @@ public class JavaService {
         }
     }
 
-    public static boolean canLog() {
+    private static boolean canLog() {
         return (config.getString("log").equalsIgnoreCase("on"));
     }
 
-    public static void log(String msg) {
+    void log(String msg) {
         if (canLog()) {
             logger.info(msg);
         }
