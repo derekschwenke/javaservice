@@ -7,7 +7,6 @@ package gov.va.eva;
  */
 
 
-
 // Case note record
 class CaseNote implements java.io.Serializable {
     // All data fields are strings, as shown in XML and LOG files:
@@ -16,11 +15,11 @@ class CaseNote implements java.io.Serializable {
     String caseID;
     String modifdDt;
     String dcmntTxt;
-    // These are responce fields
+    // These are response fields
     String result;
     boolean hasError;
 
-    CaseNote(String caseDcmntId, String bnftClaimNoteTypeCd, String caseID, String modifdDt, String dcmntTxt){
+    CaseNote(String caseDcmntId, String bnftClaimNoteTypeCd, String caseID, String modifdDt, String dcmntTxt) {
         this.caseDcmntId = caseDcmntId;
         this.bnftClaimNoteTypeCd = bnftClaimNoteTypeCd;
         this.caseID = caseID;
@@ -32,7 +31,7 @@ class CaseNote implements java.io.Serializable {
 
     String trim(String s, int length) {
         if (s != null && s.length() > length)
-            s = s.replaceAll("\n","").substring(0, length);
+            s = s.replaceAll("\n", "").substring(0, length);
         return s;
     }
 
@@ -45,27 +44,37 @@ class CaseNote implements java.io.Serializable {
                 + this.dcmntTxt);
     }
 
-    private String tag(String tag, String value){
-        return ("\n<"+tag+">"+value+"</"+tag+">");
+    private String tag(String tag, String value) {
+        return ("\n<" + tag + ">" + value + "</" + tag + ">");
+    }
+
+    public String getResultTag(String tag) {
+        try {
+            String s = this.result.split("<" + tag + ">")[1];
+            return s.split("</" + tag + ">")[0];
+        } catch (Exception e) {
+            this.result = "Missing tag " + tag + " in Result: \n" + this.result;
+            return "";
+        }
     }
 
     String toCaseDcmntDTO() {  // Note JAXB Marshaller
         String xml = "<CaseDcmntDTO>";
-        xml += tag("caseDcmntId",this.caseDcmntId);
-        xml += tag("bnftClaimNoteTypeCd",this.bnftClaimNoteTypeCd);
-        xml += tag("caseID",this.caseID);
-        xml += tag("modifdDt",this.modifdDt);
-        xml += tag("dcmntTxt",this.dcmntTxt);
+        xml += tag("caseDcmntId", this.caseDcmntId);
+        xml += tag("bnftClaimNoteTypeCd", this.bnftClaimNoteTypeCd);
+        xml += tag("caseID", this.caseID);
+        xml += tag("modifdDt", this.modifdDt);
+        xml += tag("dcmntTxt", this.dcmntTxt);
         xml += "\n</CaseDcmntDTO>";
         return xml;
     }
 
     /* This code is not used, but I think we will need to encode chars of dcmntTxt. */
-     String encode(String s){
-        s = s.replaceAll("&","&amp;");
-        s = s.replaceAll("<","&lt;");
-        s = s.replaceAll(">","&gt;");
-        s = s.replaceAll("\"","&quot;");
+    String encode(String s) {
+        s = s.replaceAll("&", "&amp;");
+        s = s.replaceAll("<", "&lt;");
+        s = s.replaceAll(">", "&gt;");
+        s = s.replaceAll("\"", "&quot;");
         return s;
     }
 

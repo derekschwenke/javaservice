@@ -1,0 +1,11 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+<soapenv:Body note=" *** This template_update is empty for security. Ask Derek Schwenke for a complete template">
+<CaseDcmntDTO>
+<caseDcmntId>3001</caseDcmntId>
+<bnftClaimNoteTypeCd>bnftClaimNoteTypeCd</bnftClaimNoteTypeCd>
+<caseID>3002</caseID>
+<modifdDt>3003</modifdDt>
+<dcmntTxt>This is the third CaseNote Running nose.</dcmntTxt>
+</CaseDcmntDTO>
+</soapenv:Body>
+</soapenv:Envelope>

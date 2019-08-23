@@ -2,7 +2,7 @@ JDBC to SOAP Java Service
 ========
 
 The e-VA Integration IN Process Java Service of the
-Executive Virtual Assistant (e-VA) Integration Project.  This Java process bridges between the corp DB e-VA tables and the BGS SOAP Service. 
+Executive Virtual Assistant (e-VA) Integration.  This Java process bridges between the corp DB e-VA tables and the BGS Service. 
 
 See Specs:
     TBD
@@ -12,30 +12,38 @@ JavaService
 --------------
 
 Input:
-- JDBC PL-SQL triggers on changes
+- JDBC PL-SQL triggers on case note changes ( on case note table )
 - Configuration file _eva.config_
-- Soap template file _templaste_update.xml_
-
+- Soap template file _template_update.xml_
       
 Output:
 - SOAP is sent to BGS Services
-- LOG messages written to _eVA.log_ file
+- Log messages written to _eVA.log_ file
 
 Code structure:
 - JavaService.java manages the service and log files.
 - CaseNote.java contains the data being sent
 - Configuration.java keeps the configuration values up to date
-- JDBCService.java registers callbacks and waits for events
-- SOAPClient.java sends updates and bla bla bla.
+- JDBCService.java registers callbacks and receives case notes.
+- SOAPClient.java sends the case notes to BGS Server.
 
-Requirements: ... Java 1.8 Oracle 18, (or 12?)
+There are two possible designs. The first based on stored procedure method calls from PL/SQL triggered by changes in the database. 
+The second design is a thin JDBC client that poll a table to retrive case notes to send 
+and mark the status in the table.
+Database triggers would insert case note records into this table.
+
+Requirements:
+- Java 1.8 
+- Oracle 11g
+
+
 
 JavaService Command Line
 ======================
 
 NAME
 
-    JavaService - transform sql to bgs soap protocol
+    JavaService - Send Case Notes from sql to bgs service
 
 SYNOPSIS
 
@@ -112,8 +120,8 @@ TBD
 Task Backlog:
 
         Build auto configuration code [C]
-        Build Java Service logging functions [T]
-        Construct CaseNotes from (test) file [T]
+        Build Java Service logging functions [C]
+        Construct CaseNotes from (test) file [C]
         Add JDBCServer initialization code and runtime code [F]
         Construct CaseNotes from JDBC calls [F]
         Rate limit the CaseNote production by JDBC server [F]
@@ -126,10 +134,10 @@ Task Backlog:
         Report BGS errors to PL/SQL [F]
         Report BGS ready to PL/SQL [F]
         Write unit/module/system tests [TNF]
-        Release code on GitHub and VA [TNF]
+        Release code on GitHub and VA [CTNF]
         
         Other & dependencies
-        Resolve problems in the specs.[N]
+        Resolve problems in the specs.[C]
         Decide if Java Services should be stateless or have a persistent queue.[N]
         If required, build and test the persistent queue in each state.[F]
         Get PIV-GFE network access [F]

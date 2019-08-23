@@ -2,10 +2,11 @@ package gov.va.eva;  // "http://cases.services.vetsnet.vba.va.gov/"
 
 import java.io.IOException;
 import java.util.logging.*;
+
 import static java.lang.Thread.sleep;
 
 
-/*  Comments soon
+/*  Comments
  */
 public class JavaService {
     private static final Configuration config = new Configuration("config.txt");
@@ -15,7 +16,7 @@ public class JavaService {
 
     public JavaService() {
         logInit();
-        log("Java Service version 0.1 starts. " + config.getString("greeting"));
+        log("Java Service version 0.2 starts. " + config.getString("greeting"));
         this.soap = new SOAPClient(this);
         this.jdbc = new JDBCService(this);
 
@@ -26,9 +27,12 @@ public class JavaService {
         System.out.println("Hit ^C to exit.");
         try {
             while (true) {
-                sleep(1000);
+                sleep(config.getInt("wait")); // note to Use better Rate limit, calculation later
+                jdbc.poll();
             }
-        } catch (InterruptedException e) {;}
+        } catch (InterruptedException e) {
+            ;
+        }
     }
 
     public static void main(String[] args) {
