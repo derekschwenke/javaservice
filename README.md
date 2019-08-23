@@ -1,20 +1,19 @@
-JDBC to SOAP Java Service
+Java Service
 ========
 
-The e-VA Integration IN Process Java Service of the
-Executive Virtual Assistant (e-VA) Integration.  This Java process bridges between the corp DB e-VA tables and the BGS Service. 
+The Java Service is part of the Executive Virtual Assistant (e-VA) integration.  
+This service bridges between the corp DB e-VA tables and the BGS service. 
 
 See Specs:
     TBD
 
 
-JavaService
---------------
-
 Input:
-- JDBC PL-SQL triggers on case note changes ( on case note table )
-- Configuration file _eva.config_
+- JDBC PL-SQL triggers on case note changes 
+- Configuration file _eva.config_ 
 - Soap template file _template_update.xml_
+- Optional _test/response.xml_
+- Optional _test/case_notes.xml_
       
 Output:
 - SOAP is sent to BGS Services
@@ -27,15 +26,18 @@ Code structure:
 - JDBCService.java registers callbacks and receives case notes.
 - SOAPClient.java sends the case notes to BGS Server.
 
-There are two possible designs. The first based on stored procedure method calls from PL/SQL triggered by changes in the database. 
-The second design is a thin JDBC client that poll a table to retrive case notes to send 
+There are two possible designs. The first based on stored procedure methods from PL/SQL triggered by changes in the database. 
+The second design is a thin JDBC client that polls a table to retrieve any case notes to send 
 and mark the status in the table.
-Database triggers would insert case note records into this table.
+Database triggers insert case note records into this table.
 
 Requirements:
 - Java 1.8 
-- Oracle 11g
+- Oracle 11g (Ex ojdbc8.jar)
 
+Notes for running this version 
+- You need a full copy of _template_update.xml_ 
+- The new _test/response.xml_ file allows you to use or bypass BGS as needed.  To use BGS, rename this file.
 
 
 JavaService Command Line

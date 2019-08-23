@@ -1,4 +1,8 @@
-greeting:configuration version 0.1
+greeting:configuration version 0.4
 bgs-url:http://vbawebservices.vba.va.gov/vawss
+jdbc-url:jdbc:oracle:thin:@localhost:1521/example
+jdbc-url:
+jdbc-user:scott
+jdbc-password:tiger
 wait:1000
 log:on

@@ -16,7 +16,7 @@ public class JavaService {
 
     public JavaService() {
         logInit();
-        log("Java Service version 0.2 starts. " + config.getString("greeting"));
+        log("Java Service version 0.3 starts. " + config.getString("greeting"));
         this.soap = new SOAPClient(this);
         this.jdbc = new JDBCService(this);
 

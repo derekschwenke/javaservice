@@ -9,18 +9,25 @@ import java.sql.*;
 public class JDBCService {
     private static JavaService javaService;
     private static Connection conn;
+    private final Configuration config = Configuration.get();
+
 
     public JDBCService(JavaService service) {
         Statement query = null;
         ResultSet resultSet = null;
         javaService = service;
+        String jdbc_url = config.getString("jdbc-url");
 
+        if ( jdbc_url.length() < 2) {
+            System.out.println( "Empty jdbc-url supplied in config.txt file." );
+            return;
+        }
         try {
             // Step 1 - Register Oracle JDBC Driver
             Class.forName("oracle.jdbc.driver.OracleDriver");
 
             // Step 2 - Creating Oracle Connection Object  jdbc:oracle:thin:@//<host>:<port>/<service_name> see https://razorsql.com/articles/oracle_jdbc_connect.html
-            conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521/example", "scott", "tiger");
+            conn = DriverManager.getConnection(jdbc_url, config.getString("jdbc-user"), config.getString("jdbc-password"));
             System.out.println("Connected With Oracle is" + (conn != null));
 
             // Step 3 - Creating Oracle Statement Object
