@@ -6,8 +6,7 @@ This service bridges between the corp DB e-VA tables and the BGS service.
 
 See Specs:
     TBD
-
-
+    
 Input:
 - JDBC PL-SQL triggers on case note changes 
 - Configuration file _eva.config_ 
@@ -36,9 +35,9 @@ Requirements:
 - Oracle 11g (Ex ojdbc8.jar)
 
 Notes for running this version 
-- You need a full copy of _template_update.xml_ 
 - The new _test/response.xml_ file allows you to use or bypass BGS as needed.  To use BGS, rename this file.
-
+- The new _jdbc-url_ setting allows you to use or bypass JDBC
+- You need a full copy of _template_update.xml_ 
 
 JavaService Command Line
 ======================

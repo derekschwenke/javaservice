@@ -58,9 +58,12 @@ class CaseNote implements java.io.Serializable {
         }
     }
 
+    private boolean isValid(String s) {return ((s != null) & (s.length() > 0));}
+
     String toCaseDcmntDTO() {  // Note JAXB Marshaller
         String xml = "<CaseDcmntDTO>";
-        xml += tag("caseDcmntId", this.caseDcmntId);
+        if (isValid(this.caseDcmntId))
+            xml += tag("caseDcmntId", this.caseDcmntId);
         xml += tag("bnftClaimNoteTypeCd", this.bnftClaimNoteTypeCd);
         xml += tag("caseID", this.caseID);
         xml += tag("modifdDt", this.modifdDt);
@@ -69,7 +72,7 @@ class CaseNote implements java.io.Serializable {
         return xml;
     }
 
-    /* This code is not used, but I think we will need to encode chars of dcmntTxt. */
+    /* This code is not used, but I think we will need it to escape chars found in dcmntTxt in SOAP. */
     String encode(String s) {
         s = s.replaceAll("&", "&amp;");
         s = s.replaceAll("<", "&lt;");

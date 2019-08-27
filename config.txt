@@ -5,4 +5,4 @@ jdbc-url:
 jdbc-user:scott
 jdbc-password:tiger
 wait:1000
-log:on
+log:off

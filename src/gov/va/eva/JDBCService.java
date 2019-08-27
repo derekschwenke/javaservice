@@ -19,7 +19,7 @@ public class JDBCService {
         String jdbc_url = config.getString("jdbc-url");
 
         if ( jdbc_url.length() < 2) {
-            System.out.println( "Empty jdbc-url supplied in config.txt file." );
+            System.out.println( "Empty jdbc-url supplied in config.txt file, no jdbc server." );
             return;
         }
         try {
