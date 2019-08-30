@@ -1,16 +1,16 @@
 <S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
-    <S:Body>
-    <CaseDcmntDTO>
-        <bnftClaimNoteTypeCd>001</bnftClaimNoteTypeCd>
-        <caseDcmntId>3612</caseDcmntId>
-        <caseId>65858</caseId>
-        <dcmntTxt>updating a note</dcmntTxt>
-        <jrnDt>2019-07-11T15:23:59-05:00</jrnDt>
-        <jrnLctnId>281</jrnLctnId>
-        <jrnObjId>VBMS</jrnObjId>
-        <jrnStatusTypeCd>U</jrnStatusTypeCd>
-        <jrnUserId>281CEASL</jrnUserId>
-        <modifdDt>2019-07-11T15:23:59-05:00</modifdDt>
-    </CaseDcmntDTO>
-    </S:Body>
+<S:Body>
+<CaseDcmntDTO>
+<bnftClaimNoteTypeCd>001</bnftClaimNoteTypeCd>
+<caseDcmntId>3612</caseDcmntId>
+<caseId>65858</caseId>
+<dcmntTxt>updating a note</dcmntTxt>
+<jrnDt>2019-07-11T15:23:59-05:00</jrnDt>
+<jrnLctnId>281</jrnLctnId>
+<jrnObjId>VBMS</jrnObjId>
+<jrnStatusTypeCd>u</jrnStatusTypeCd>
+<jrnUserId>281CEASL</jrnUserId>
+<modifdDt>2019-07-11T15:23:59-05:00</modifdDt>
+</CaseDcmntDTO>
+</S:Body>
 </S:Envelope>

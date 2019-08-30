@@ -1,8 +1,11 @@
-greeting:configuration version 0.4
+version:configuration version 0.5
 bgs-url:http://vbawebservices.vba.va.gov/vawss
-jdbc-url:jdbc:oracle:thin:@localhost:1521/example
+jdbc-url:jdbc:oracle:thin:@vbadev.vba.va.gov:1527:devl
 jdbc-url:
-jdbc-user:scott
-jdbc-password:tiger
+jdbc-user:etldevl
+jdbc-password:etlprod
+jdbc-query:SELECT dummy FROM dual
 wait:1000
-log:off
+loop:off
+log-console:on
+log-file:on

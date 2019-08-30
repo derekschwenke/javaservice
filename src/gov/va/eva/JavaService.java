@@ -1,37 +1,43 @@
 package gov.va.eva;  // "http://cases.services.vetsnet.vba.va.gov/"
 
 import java.io.IOException;
-import java.util.logging.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static java.lang.Thread.sleep;
 
 
-/*  Comments
- */
+/*  Comments  */
 public class JavaService {
     private static final Configuration config = new Configuration("config.txt");
-    private static final Logger logger = Logger.getLogger("eVA.log");
+    private static Path log_fn;
     private JDBCService jdbc;
     private SOAPClient soap;
 
     public JavaService() {
-        logInit();
-        log("Java Service version 0.3 starts. " + config.getString("greeting"));
+        log("Java Service version 0.5 starts. " + config.getString("version"));
         this.soap = new SOAPClient(this);
         this.jdbc = new JDBCService(this);
 
-        // Run tests
-        soap.test();
 
-        // Loop until ^C Exit
-        System.out.println("Hit ^C to exit.");
-        try {
+        soap.tests(); // Run tests, remove this line.
+
+        // Poll for case notes.
+        if (config.getBool("loop")) {
+            System.out.println("Hit ^C to exit.");
             while (true) {
-                sleep(config.getInt("wait")); // note to Use better Rate limit, calculation later
+                try {
+                    sleep(config.getInt("wait")); // note to Use better Rate limit, calculation later
+                } catch (InterruptedException e) {
+                    ;
+                }
                 jdbc.poll();
             }
-        } catch (InterruptedException e) {
-            ;
         }
     }
 
@@ -43,25 +49,29 @@ public class JavaService {
         soap.sendCaseNote(note);
     }
 
-    /* Logging is based on java lagger but may be replaced or moved - - - - - - - - - - - - - - */
-    private static void logInit() {
-        try {
-            Handler fh = new FileHandler("eVA.log", false);  // append is true  %t/ temp %h ?
-            fh.setFormatter(new SimpleFormatter());
-            logger.addHandler(fh);
-            logger.setLevel(Level.FINE);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    /* Logging  may be replaced or moved - - - - - - - - - - - - - - */
 
-    private static boolean canLog() {
-        return (config.getString("log").equalsIgnoreCase("on"));
+    private String logFormat(String str) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+        return (dateFormat.format(new Date()) + " " + str +"\n");
     }
 
     void log(String msg) {
-        if (canLog()) {
-            logger.info(msg);
+        if (config.getBool("log-console")) {
+            System.out.print(logFormat(msg));
+        }
+        if (config.getBool("log-file")) {
+            try {
+                if (log_fn == null) {
+                    log_fn = Paths.get("eVA.log");
+                    Files.write(log_fn, logFormat(msg).getBytes(), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
+                } else {
+                    Files.write(log_fn, logFormat(msg).getBytes(), StandardOpenOption.APPEND, StandardOpenOption.CREATE);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
+

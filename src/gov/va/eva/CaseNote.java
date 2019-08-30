@@ -2,13 +2,12 @@ package gov.va.eva;
 
 /**
  * Case note record
- * This design uses all Strings for all Case note fields, but this is not pure java.
- * However, in SOAP (and log files) the CaseNote is a caseDcmntDTO, which is all Strings.
+ * This design uses all Strings for all Case note fields, because in SOAP (and log files) the CaseNote is a caseDcmntDTO, which is all Strings.
  */
 
 
-// Case note record
-class CaseNote implements java.io.Serializable {
+// Case note caseDcmntDTO record
+class CaseNote {
     // All data fields are strings, as shown in XML and LOG files:
     String caseDcmntId;
     String bnftClaimNoteTypeCd;
@@ -17,6 +16,7 @@ class CaseNote implements java.io.Serializable {
     String dcmntTxt;
     // These are response fields
     String result;
+    String error;
     boolean hasError;
 
     CaseNote(String caseDcmntId, String bnftClaimNoteTypeCd, String caseID, String modifdDt, String dcmntTxt) {
@@ -26,7 +26,7 @@ class CaseNote implements java.io.Serializable {
         this.modifdDt = modifdDt;
         this.dcmntTxt = dcmntTxt;
         this.result = null;
-        this.hasError = false;
+        this.error = null;
     }
 
     String trim(String s, int length) {
@@ -36,12 +36,15 @@ class CaseNote implements java.io.Serializable {
     }
 
     public String toString() {
+        String e = "";
+        if (this.error != null) e = "      >>> " + this.error + " <<< ";
         return ("CaseNote "
                 + this.caseDcmntId + " "
                 + this.bnftClaimNoteTypeCd + " "
                 + this.caseID + " "
                 + this.modifdDt + " "
-                + this.dcmntTxt);
+                + this.dcmntTxt + " "
+                + e);
     }
 
     private String tag(String tag, String value) {
@@ -53,7 +56,7 @@ class CaseNote implements java.io.Serializable {
             String s = this.result.split("<" + tag + ">")[1];
             return s.split("</" + tag + ">")[0];
         } catch (Exception e) {
-            this.result = "Missing tag " + tag + " in Result: \n" + this.result;
+            this.error = "Missing tag " + tag + " in xml result";
             return "";
         }
     }
@@ -72,7 +75,7 @@ class CaseNote implements java.io.Serializable {
         return xml;
     }
 
-    /* This code is not used, but I think we will need it to escape chars found in dcmntTxt in SOAP. */
+    /* This code is not used, but it will be needed to escape chars found in dcmntTxt for SOAP. */
     String encode(String s) {
         s = s.replaceAll("&", "&amp;");
         s = s.replaceAll("<", "&lt;");

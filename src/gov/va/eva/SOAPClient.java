@@ -7,7 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
-/*  */
+/*  BFS SOAP interface */
 
 public class SOAPClient {
     private static JavaService javaService;
@@ -57,7 +57,6 @@ public class SOAPClient {
         try {
             String template = new String(Files.readAllBytes(Paths.get(update_fn)));
             String request = template.replace("<CaseDcmntDTO/>", note.toCaseDcmntDTO());
-            javaService.log(note.toString());
             Files.write(Paths.get(out_fn), request.getBytes());  // Save to fake output file
             if (new File(res_fn).exists()) {
                 sendToFile(note, request);
@@ -66,16 +65,17 @@ public class SOAPClient {
             }
 
             String status = note.getResultTag("jrnStatusTypeCd").toLowerCase();
-            note.hasError = (status.equals("i") | status.equals("u")) == false;
+            if ((status.equals("i") | status.equals("u")) == false)
+                note.error = "Error wong BGS status: " + status + ".";
         } catch (IOException e) {
-            note.result = "Error" + e.toString(); // save note.result
-            note.hasError = true;
+            note.error = "Error" + e.toString();
             e.printStackTrace();
         }
+        javaService.log(note.toString());
     }
 
     /* This code will be moved to a unit test someday */
-    void test() {
+    void tests() {
         testCaseNotes();
     }
 
@@ -86,6 +86,7 @@ public class SOAPClient {
 
             while (scan.hasNextLine()) {
                 String[] f = scan.nextLine().split(" ", 5);
+                for (int i=0;i<f.length;i++) if ("\"\"".equals(f[i])) f[i] = ""; // two quotes is the empty string.
                 CaseNote note = new CaseNote(f[0], f[1], f[2], f[3], f[4]);
                 javaService.receive(note);
             }

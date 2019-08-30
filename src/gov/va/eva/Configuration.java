@@ -29,7 +29,7 @@ public class Configuration {
     }
 
     private synchronized void load() {
-        System.out.println("Configuration loads " + file.getName());
+        //System.out.println("Configuration loads " + file.getName());
         try (FileReader reader = new FileReader(file)) {
             properties = new Properties(); // or .clear()
             properties.load(reader);
@@ -55,10 +55,13 @@ public class Configuration {
 
     String getString(String key) {
         check();
-        return properties.getProperty(key);
+        String value = properties.getProperty(key);
+        if (value==null) System.out.println("Missing '"+key+"' in "+file.getName());
+        return value;
     }
 
     Integer getInt(String key) {
         return Integer.valueOf(getString(key));
     }
+    Boolean getBool(String key) { return getString(key).equalsIgnoreCase("on"); }
 }

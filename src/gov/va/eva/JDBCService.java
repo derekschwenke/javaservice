@@ -19,7 +19,7 @@ public class JDBCService {
         String jdbc_url = config.getString("jdbc-url");
 
         if ( jdbc_url.length() < 2) {
-            System.out.println( "Empty jdbc-url supplied in config.txt file, no jdbc server." );
+            javaService.log( "Empty jdbc-url supplied in config.txt file, no jdbc server." );
             return;
         }
         try {
@@ -34,15 +34,16 @@ public class JDBCService {
             query = conn.createStatement();
 
             // Step 4 - Execute SQL Query
-            resultSet = query.executeQuery("SELECT * FROM employee");
+            resultSet = query.executeQuery(config.getString("jdbc-query"));
 
             // Step 5 - Read results
             while (resultSet.next()) {
                 System.out.println(resultSet.getInt(1) + ", " + resultSet.getString(2) + ", " + resultSet.getFloat(3) + "$");
                 int id = resultSet.getInt(1);
                 CaseNote note = new CaseNote(String.valueOf(id), "TYPE", "5000", "5000", "dcmntTxt for the case note.");
-                javaService.log(note.toString());
+                javaService.log("JDBC read "+ note.toString());
                 javaService.receive(note);
+                // check note.error here
             }
         } catch (Exception sqlException) {
             sqlException.printStackTrace();

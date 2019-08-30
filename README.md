@@ -1,11 +1,9 @@
 Java Service
 ========
 
-The Java Service is part of the Executive Virtual Assistant (e-VA) integration.  
-This service bridges between the corp DB e-VA tables and the BGS service. 
+The Java Service is part of the Executive Virtual Assistant (e-VA) IN process.  
+This service bridges between the IN process e-VA tables and the BGS service. 
 
-See Specs:
-    TBD
     
 Input:
 - JDBC PL-SQL triggers on case note changes 
@@ -20,24 +18,36 @@ Output:
 
 Code structure:
 - JavaService.java manages the service and log files.
-- CaseNote.java contains the data being sent
-- Configuration.java keeps the configuration values up to date
+- CaseNote.java holds the data records being transmitted.
+- Configuration.java keeps the configuration values up to date.
 - JDBCService.java registers callbacks and receives case notes.
 - SOAPClient.java sends the case notes to BGS Server.
 
 There are two possible designs. The first based on stored procedure methods from PL/SQL triggered by changes in the database. 
 The second design is a thin JDBC client that polls a table to retrieve any case notes to send 
 and mark the status in the table.
-Database triggers insert case note records into this table.
+Database triggers insert changed case note records into this table.
 
 Requirements:
 - Java 1.8 
-- Oracle 11g (Ex ojdbc8.jar)
+- Oracle 11g 
+- (Ex ojdbc8.jar)
 
 Notes for running this version 
 - The new _test/response.xml_ file allows you to use or bypass BGS as needed.  To use BGS, rename this file.
 - The new _jdbc-url_ setting allows you to use or bypass JDBC
 - You need a full copy of _template_update.xml_ 
+
+To Build:
+
+   javac src\gov\va\eva\*.java 
+
+To Run:
+
+   java -cp ./src gov.va.eva.JavaService
+
+Also add to -cp any .jar files (ojdbc8.jar javaservice.jar).
+
 
 JavaService Command Line
 ======================
@@ -48,11 +58,10 @@ NAME
 
 SYNOPSIS
 
-    java javaService [...] 
+    java -cp "path to each .jar" gov.va.eva.JavaService [...] 
 
 
 HOW TO RUN: (tbd)
-1. Clean up old .log and .soap files
 1. Ask for the full template_update.xml from derek.
 1. Start BGS server
 1. Start Oracle server
@@ -62,42 +71,27 @@ INPUT: _template_update.xml_ omitted for security
 
 INPUT: _test/case_notes.txt_
 
-    1001 bnftClaimNoteTypeCd 1002 1003 This is the first CaseNote.
-    2001 bnftClaimNoteTypeCd 2002 2003 This is the second CaseNote.
-    3001 bnftClaimNoteTypeCd 3002 3003 This is the third CaseNote Running nose.    
-    
+    1001 CatA 1002 29-AUG-19 The first Case Note one
+    2002 CatA 2002 29-AUG-19 The second Case Note
+    ""   CatA 3002 29-AUG-19 The third Case Note    
 
 OUTPUT: _console_
 
-    Configuration loads config.txt
-    Aug 17, 2019 4:31:53 PM gov.va.eva.JavaService log
-    INFO: Java Service version 0.1 starts. configuration version 0.1
-    Aug 17, 2019 4:31:53 PM gov.va.eva.JavaService log
-    INFO: CaseNote 1001 bnftClaimNoteTypeCd 1002 1003 dcmntTxt
-    Aug 17, 2019 4:31:53 PM gov.va.eva.JavaService log
-    INFO: CaseNote 1001 bnftClaimNoteTypeCd 1002 1003 This is the first CaseNote.
-    Aug 17, 2019 4:31:53 PM gov.va.eva.JavaService log
-    INFO: CaseNote 2001 bnftClaimNoteTypeCd 2002 2003 This is the second CaseNote.
-    Aug 17, 2019 4:31:53 PM gov.va.eva.JavaService log
-    INFO: CaseNote 3001 bnftClaimNoteTypeCd 3002 3003 This is the third CaseNote Running nose.
-    Hit ^C to exit.
-    
-    Process finished with exit code -1
+    2019 08 29 21:24:48 Java Service version 0.5 starts. configuration version 0.5
+    2019 08 29 21:24:48 Empty jdbc-url supplied in config.txt file, no jdbc server.
+    2019 08 29 21:24:48 CaseNote 1001 CatA 1002 29-AUG-19 The first Case Note one 
+    2019 08 29 21:24:48 CaseNote 2002 CatA 2002 29-AUG-19 The second Case Note 
+    2019 08 29 21:24:48 CaseNote  CatA 3002 29-AUG-19 The third Case Note 
+
+Process finished with exit code 0
     
 OUTPUT: _eVA.log_
 
-    Aug 16, 2019 1:45:01 PM gov.va.eva.JavaService log
-    INFO: Java Service version 0.1 starts. configuration version 0.1
-    Aug 16, 2019 1:45:01 PM gov.va.eva.JavaService log
-    INFO: CaseNote 1001 bnftClaimNoteTypeCd 1002 1003 dcmntTxt
-    Aug 16, 2019 1:45:01 PM gov.va.eva.JavaService log
-    INFO: CaseNote 1001 bnftClaimNoteTypeCd 1002 1003 This is the first CaseNote.       
-    Aug 16, 2019 1:45:01 PM gov.va.eva.JavaService log
-    INFO: CaseNote 2001 bnftClaimNoteTypeCd 2002 2003 This is the second CaseNote.
-    Aug 16, 2019 1:45:01 PM gov.va.eva.JavaService log
-    INFO: CaseNote 3001 bnftClaimNoteTypeCd 3002 3003 This is the third CaseNote Running nose.
-    
-    Hit ^C to exit.
+    2019 08 29 21:24:48 Java Service version 0.5 starts. configuration version 0.5
+    2019 08 29 21:24:48 Empty jdbc-url supplied in config.txt file, no jdbc server.
+    2019 08 29 21:24:48 CaseNote 1001 CatA 1002 29-AUG-19 The first Case Note one 
+    2019 08 29 21:24:48 CaseNote 2002 CatA 2002 29-AUG-19 The second Case Note 
+    2019 08 29 21:24:48 CaseNote  CatA 3002 29-AUG-19 The third Case Note 
 
 OUTPUT: _soap.xml_ omitted 
 
