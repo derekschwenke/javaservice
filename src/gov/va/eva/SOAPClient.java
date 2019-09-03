@@ -3,8 +3,6 @@ package gov.va.eva;
 import java.io.*;
 import java.net.URL;
 import java.net.HttpURLConnection;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Scanner;
 
 /*  BFS SOAP interface */
@@ -47,17 +45,31 @@ public class SOAPClient {
         note.result = response.toString();
     }
 
+    private String readFile(String fn) throws IOException {
+        Scanner in = new Scanner(new File(fn));
+        in.useDelimiter("\\Z");
+        String text = in.next();
+        in.close();
+        return text;
+    }
+
+    private void writeFile(String fn, String data) throws IOException {
+        FileWriter out = new FileWriter(new File(fn));
+        out.write(data);
+        out.close();
+    }
+
     private void sendToFile(CaseNote note, String request) throws IOException {
-        Files.write(Paths.get(out_fn), request.getBytes());  // write to fake file
-        note.result = new String(Files.readAllBytes(Paths.get(res_fn)));  // read from fake file
+        writeFile(out_fn,request);  // write to fake file
+        note.result = readFile(res_fn); // read from fake input file
     }
 
 
     void sendCaseNote(CaseNote note) {
         try {
-            String template = new String(Files.readAllBytes(Paths.get(update_fn)));
+            //String template = new String(Files.readAllBytes(Paths.get(update_fn)));
+            String template = readFile(update_fn);
             String request = template.replace("<CaseDcmntDTO/>", note.toCaseDcmntDTO());
-            Files.write(Paths.get(out_fn), request.getBytes());  // Save to fake output file
             if (new File(res_fn).exists()) {
                 sendToFile(note, request);
             } else {
@@ -66,7 +78,7 @@ public class SOAPClient {
 
             String status = note.getResultTag("jrnStatusTypeCd").toLowerCase();
             if ((status.equals("i") | status.equals("u")) == false)
-                note.error = "Error wong BGS status: " + status + ".";
+                note.error = "Error BGS status wrong: " + status + ".";
         } catch (IOException e) {
             note.error = "Error" + e.toString();
             e.printStackTrace();

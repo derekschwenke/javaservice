@@ -30,7 +30,8 @@ public class Configuration {
 
     private synchronized void load() {
         //System.out.println("Configuration loads " + file.getName());
-        try (FileReader reader = new FileReader(file)) {
+        try {
+            FileReader reader = new FileReader(file);
             properties = new Properties(); // or .clear()
             properties.load(reader);
         } catch (IOException e) {

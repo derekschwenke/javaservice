@@ -17,7 +17,6 @@ class CaseNote {
     // These are response fields
     String result;
     String error;
-    boolean hasError;
 
     CaseNote(String caseDcmntId, String bnftClaimNoteTypeCd, String caseID, String modifdDt, String dcmntTxt) {
         this.caseDcmntId = caseDcmntId;
@@ -29,9 +28,10 @@ class CaseNote {
         this.error = null;
     }
 
-    String trim(String s, int length) {
-        if (s != null && s.length() > length)
-            s = s.replaceAll("\n", "").substring(0, length);
+    String clean(String s, int length) {
+        if (s==null) s = "";
+        if (s.length()>length) s = s.substring(0, length);
+        s = s.replaceAll("\n"," ");
         return s;
     }
 
@@ -43,7 +43,7 @@ class CaseNote {
                 + this.bnftClaimNoteTypeCd + " "
                 + this.caseID + " "
                 + this.modifdDt + " "
-                + this.dcmntTxt + " "
+                + clean(this.dcmntTxt,80) + " "
                 + e);
     }
 

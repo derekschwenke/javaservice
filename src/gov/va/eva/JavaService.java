@@ -1,10 +1,8 @@
 package gov.va.eva;  // "http://cases.services.vetsnet.vba.va.gov/"
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,7 +13,7 @@ import static java.lang.Thread.sleep;
 /*  Comments  */
 public class JavaService {
     private static final Configuration config = new Configuration("config.txt");
-    private static Path log_fn;
+    private static FileWriter log_fr;
     private JDBCService jdbc;
     private SOAPClient soap;
 
@@ -49,10 +47,10 @@ public class JavaService {
         soap.sendCaseNote(note);
     }
 
-    /* Logging  may be replaced or moved - - - - - - - - - - - - - - */
+    /* Logging may be replaced or moved - - - - - - - - - - - - - - */
 
     private String logFormat(String str) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return (dateFormat.format(new Date()) + " " + str +"\n");
     }
 
@@ -62,16 +60,15 @@ public class JavaService {
         }
         if (config.getBool("log-file")) {
             try {
-                if (log_fn == null) {
-                    log_fn = Paths.get("eVA.log");
-                    Files.write(log_fn, logFormat(msg).getBytes(), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
-                } else {
-                    Files.write(log_fn, logFormat(msg).getBytes(), StandardOpenOption.APPEND, StandardOpenOption.CREATE);
+                if (log_fr == null) {
+                    log_fr = new FileWriter(new File("eVA.log"));
                 }
+                log_fr.write(logFormat(msg));
             } catch (IOException e) {
                 e.printStackTrace();
+                // log_fr.close();
+                log_fr = null;
             }
         }
     }
 }
-

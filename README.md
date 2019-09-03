@@ -29,9 +29,9 @@ and mark the status in the table.
 Database triggers insert changed case note records into this table.
 
 Requirements:
-- Java 1.8 
+- Java 1.8 or Java 1.6 
 - Oracle 11g 
-- (Ex ojdbc8.jar)
+- ojdbc (ojdbc8.jar)
 
 Notes for running this version 
 - The new _test/response.xml_ file allows you to use or bypass BGS as needed.  To use BGS, rename this file.
@@ -41,12 +41,6 @@ Notes for running this version
 To Build:
 
    javac src\gov\va\eva\*.java 
-
-To Run:
-
-   java -cp ./src gov.va.eva.JavaService
-
-Also add to -cp any .jar files (ojdbc8.jar javaservice.jar).
 
 
 JavaService Command Line
@@ -58,7 +52,7 @@ NAME
 
 SYNOPSIS
 
-    java -cp "path to each .jar" gov.va.eva.JavaService [...] 
+    java -cp "./src" or "(ojdbc8.jar : javaservice.jar)" gov.va.eva.JavaService [...] 
 
 
 HOW TO RUN: (tbd)

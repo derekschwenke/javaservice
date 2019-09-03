@@ -76,7 +76,7 @@ public class JDBCService {
         CaseNote note = new CaseNote(String.valueOf(caseDcmntId), "TYPE", "4000", "4000", "dcmntTxt for the case note.");
         javaService.log(note.toString());
         javaService.receive(note);
-        if (note.hasError) {
+        if (note.error != null) {
             throw new SQLException("JavaService Reported Error");
         }
     }
