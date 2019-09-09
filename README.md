@@ -29,14 +29,21 @@ and mark the status in the table.
 Database triggers insert changed case note records into this table.
 
 Requirements:
-- Java 1.8 or Java 1.6 
+- Java 1.6 to Java 1.11 
 - Oracle 11g 
 - ojdbc (ojdbc8.jar)
 
 Notes for running this version 
 - The new _test/response.xml_ file allows you to use or bypass BGS as needed.  To use BGS, rename this file.
 - The new _jdbc-url_ setting allows you to use or bypass JDBC
-- You need a full copy of _template_update.xml_ 
+
+Installation 
+
+Copy these files that are not in the .jar file:
+- _config.txt_
+- _test/case_nates.txt_
+- _test/response.xml_ to bypass BGS
+- _template_update.xml_ full version
 
 To Build:
 

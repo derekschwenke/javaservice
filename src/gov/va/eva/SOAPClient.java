@@ -5,7 +5,7 @@ import java.net.URL;
 import java.net.HttpURLConnection;
 import java.util.Scanner;
 
-/*  BFS SOAP interface */
+/*  BGS SOAP client interface */
 
 public class SOAPClient {
     private static JavaService javaService;
@@ -60,14 +60,13 @@ public class SOAPClient {
     }
 
     private void sendToFile(CaseNote note, String request) throws IOException {
-        writeFile(out_fn,request);  // write to fake file
+        writeFile(out_fn,request);      // write to fake output file
         note.result = readFile(res_fn); // read from fake input file
     }
 
 
     void sendCaseNote(CaseNote note) {
         try {
-            //String template = new String(Files.readAllBytes(Paths.get(update_fn)));
             String template = readFile(update_fn);
             String request = template.replace("<CaseDcmntDTO/>", note.toCaseDcmntDTO());
             if (new File(res_fn).exists()) {
@@ -94,11 +93,12 @@ public class SOAPClient {
     // reads notes from file. The case notes are one per line. They can not have \n new lines in this test.
     private void testCaseNotes() {
         try {
+            if (!(new File(in_fn).exists())) return;
             Scanner scan = new Scanner(new File(in_fn));
 
             while (scan.hasNextLine()) {
                 String[] f = scan.nextLine().split(" ", 5);
-                for (int i=0;i<f.length;i++) if ("\"\"".equals(f[i])) f[i] = ""; // two quotes is the empty string.
+                for (int i=0;i<f.length;i++) if ("''".equals(f[i])) f[i] = ""; // two single quotes is the empty string.
                 CaseNote note = new CaseNote(f[0], f[1], f[2], f[3], f[4]);
                 javaService.receive(note);
             }

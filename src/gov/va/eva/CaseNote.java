@@ -11,17 +11,17 @@ class CaseNote {
     // All data fields are strings, as shown in XML and LOG files:
     String caseDcmntId;
     String bnftClaimNoteTypeCd;
-    String caseID;
+    String caseId;
     String modifdDt;
     String dcmntTxt;
     // These are response fields
     String result;
     String error;
 
-    CaseNote(String caseDcmntId, String bnftClaimNoteTypeCd, String caseID, String modifdDt, String dcmntTxt) {
+    CaseNote(String caseDcmntId, String bnftClaimNoteTypeCd, String caseId, String modifdDt, String dcmntTxt) {
         this.caseDcmntId = caseDcmntId;
         this.bnftClaimNoteTypeCd = bnftClaimNoteTypeCd;
-        this.caseID = caseID;
+        this.caseId = caseId;
         this.modifdDt = modifdDt;
         this.dcmntTxt = dcmntTxt;
         this.result = null;
@@ -41,7 +41,7 @@ class CaseNote {
         return ("CaseNote "
                 + this.caseDcmntId + " "
                 + this.bnftClaimNoteTypeCd + " "
-                + this.caseID + " "
+                + this.caseId + " "
                 + this.modifdDt + " "
                 + clean(this.dcmntTxt,80) + " "
                 + e);
@@ -68,7 +68,7 @@ class CaseNote {
         if (isValid(this.caseDcmntId))
             xml += tag("caseDcmntId", this.caseDcmntId);
         xml += tag("bnftClaimNoteTypeCd", this.bnftClaimNoteTypeCd);
-        xml += tag("caseID", this.caseID);
+        xml += tag("caseId", this.caseId);
         xml += tag("modifdDt", this.modifdDt);
         xml += tag("dcmntTxt", this.dcmntTxt);
         xml += "\n</CaseDcmntDTO>";

@@ -1,5 +1,7 @@
 version:configuration version 0.5
 bgs-url:http://vbawebservices.vba.va.gov/vawss
+bgs-url:http://bepdev.vba.va.gov/CaseWebServiceBean/CaseWebService
+bgs-url:http://localhost:8000/priv/
 jdbc-url:jdbc:oracle:thin:@vbadev.vba.va.gov:1527:devl
 jdbc-url:
 jdbc-user:etldevl
