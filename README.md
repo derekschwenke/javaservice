@@ -34,13 +34,21 @@ Requirements:
 - ojdbc (ojdbc8.jar)
 
 Notes for running this version 
-- The new _test/response.xml_ file allows you to use or bypass BGS as needed.  To use BGS, rename this file.
-- The new _jdbc-url_ setting allows you to use or bypass JDBC
+- File config.txt renamed eVA.config
+- File eva.log renamed eVA.dat
+- eVA.config names changed:
+   - log-to-console:on  replaces log-console
+   - log-to-file:on     replaces log-file
+   - log-dcmntTxt-length:40  NEW
 
-Installation 
+
+- The new _test/response.xml_ file allows you to use or bypass BGS as needed.  To use BGS, rename this file
+- The new _jdbc-url_ setting allows you to use or bypass JDBC
+- _caseID_ field capitalization (soap) changed to _caseId_ to match BGS
+- Update and Insert can be simulated in the _case_notes.xml_ file by using SINGLE quotes '' for any empty fields  
 
 Copy these files that are not in the .jar file:
-- _config.txt_
+- _eVA.config_
 - _test/case_nates.txt_
 - _test/response.xml_ to bypass BGS
 - _template_update.xml_ full version

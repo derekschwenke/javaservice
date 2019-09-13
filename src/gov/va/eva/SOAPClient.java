@@ -25,7 +25,8 @@ public class SOAPClient {
         URL url = new URL(config.getString("bgs-url"));
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("POST");
-        con.setRequestProperty("Content-Type", "application/soap+xml; charset=utf-8");
+        //con.setRequestProperty("Content-Type", "application/soap+xml; charset=utf-8");
+        con.setRequestProperty("Content-Type", "text/xml; charset=utf-8");
         con.setDoOutput(true);
         DataOutputStream wr = new DataOutputStream(con.getOutputStream());
         wr.writeBytes(request);
@@ -75,6 +76,7 @@ public class SOAPClient {
                 sendToBGS(note, request);
             }
 
+            // Status for Update and Insert
             String status = note.getResultTag("jrnStatusTypeCd").toLowerCase();
             if ((status.equals("i") | status.equals("u")) == false)
                 note.error = "Error BGS status wrong: " + status + ".";

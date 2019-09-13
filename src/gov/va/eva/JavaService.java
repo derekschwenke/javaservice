@@ -12,13 +12,13 @@ import static java.lang.Thread.sleep;
 
 /*  Comments  */
 public class JavaService {
-    private static final Configuration config = new Configuration("config.txt");
+    private static final Configuration config = new Configuration("eVA.config");
     private static FileWriter log_fr;
     private JDBCService jdbc;
     private SOAPClient soap;
 
     public JavaService() {
-        log("Java Service version 0.5 starts. " + config.getString("version"));
+        log("Java Service version 0.6 starts. " + config.getString("version"));
         this.soap = new SOAPClient(this);
         this.jdbc = new JDBCService(this);
 
@@ -55,13 +55,13 @@ public class JavaService {
     }
 
     void log(String msg) {
-        if (config.getBool("log-console")) {
+        if (config.getBool("log-to-console")) {
             System.out.print(logFormat(msg));
         }
-        if (config.getBool("log-file")) {
+        if (config.getBool("log-to-file")) {
             try {
                 if (log_fr == null) {
-                    log_fr = new FileWriter(new File("eVA.log"));
+                    log_fr = new FileWriter(new File("eVA.dat"));
                 }
                 log_fr.write(logFormat(msg));
             } catch (IOException e) {
