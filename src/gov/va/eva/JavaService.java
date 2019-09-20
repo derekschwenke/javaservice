@@ -18,12 +18,12 @@ public class JavaService {
     private SOAPClient soap;
 
     public JavaService() {
-        log("Java Service version 0.6 starts. " + config.getString("version"));
+        log("Java Service version 0.7 starts. " + config.getString("version"));
         this.soap = new SOAPClient(this);
         this.jdbc = new JDBCService(this);
 
 
-        soap.tests(); // Run tests, remove this line.
+        soap.testCaseNotes(); // Run tests, remove this line.
 
         // Poll for case notes.
         if (config.getBool("loop")) {
@@ -47,11 +47,11 @@ public class JavaService {
         soap.sendCaseNote(note);
     }
 
-    /* Logging may be replaced or moved - - - - - - - - - - - - - - */
+    /* Logging */
 
     private String logFormat(String str) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return (dateFormat.format(new Date()) + " " + str +"\n");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
+        return (dateFormat.format(new Date()) + " IN " + str +"\n");
     }
 
     void log(String msg) {

@@ -1,5 +1,9 @@
 package gov.va.eva;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Case note record
  * This design uses all Strings for all Case note fields, because in SOAP (and log files) the CaseNote is a caseDcmntDTO, which is all Strings.
@@ -30,25 +34,26 @@ class CaseNote {
 
     String clean(String s, int length) {
         if (s==null) s = "";
-        if (s.length()>length) s = s.substring(0, length);
+        if (s.length()>length) s = s.substring(0, length); // trim
         s = s.replaceAll("\n"," ");
+        s = String.format("%-" + length + "s", s); // pad
         return s;
     }
 
     public String toString() {
-        String e = "";
-        if (this.error != null) e = "      >>> " + this.error + " <<< ";
-        return ("CaseNote "
+        String e = (this.error == null) ? "PASS " : "FAIL " + this.error + " ";
+        return (e
+                + "CaseNote "
                 + this.caseDcmntId + " "
                 + this.bnftClaimNoteTypeCd + " "
                 + this.caseId + " "
                 + this.modifdDt + " "
-                + clean(this.dcmntTxt,80) + " "
-                + e);
+                + clean(this.dcmntTxt,80) + " " // 80 or log-dcmntTxt-length
+                );
     }
 
-    private String tag(String tag, String value) {
-        return ("\n<" + tag + ">" + value + "</" + tag + ">");
+    public void setError(String str) {
+        this.error = (this.error == null) ? str : (str + " " +  this.error);
     }
 
     public String getResultTag(String tag) {
@@ -56,12 +61,22 @@ class CaseNote {
             String s = this.result.split("<" + tag + ">")[1];
             return s.split("</" + tag + ">")[0];
         } catch (Exception e) {
-            this.error = "Missing tag " + tag + " in xml result";
+            this.setError("SOAP Fault Exception missing tag " + tag + " in result");
             return "";
         }
     }
 
-    private boolean isValid(String s) {return ((s != null) & (s.length() > 0));}
+    private String encode(String s) {
+        s = s.replaceAll("&", "&amp;");
+        s = s.replaceAll("<", "&lt;");
+        s = s.replaceAll(">", "&gt;");
+        s = s.replaceAll("\"", "&quot;");
+        return s;
+    }
+
+    private String tag(String tag, String value) {
+        return ("\n<" + tag + ">" + encode(value) + "</" + tag + ">");
+    }
 
     String toCaseDcmntDTO() {  // Note JAXB Marshaller
         String xml = "<CaseDcmntDTO>";
@@ -75,13 +90,22 @@ class CaseNote {
         return xml;
     }
 
-    /* This code is not used, but it will be needed to escape chars found in dcmntTxt for SOAP. */
-    String encode(String s) {
-        s = s.replaceAll("&", "&amp;");
-        s = s.replaceAll("<", "&lt;");
-        s = s.replaceAll(">", "&gt;");
-        s = s.replaceAll("\"", "&quot;");
-        return s;
+    private boolean isValid(String s) {return ((s != null) & (s.length() > 0));}
+
+    private void valid(String f,String v) {
+        if (!isValid(v)) this.setError( "Exception " + f );
     }
 
+    private String now() {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
+        return dateFormat.format(new Date());
+    }
+
+    public void validate() {
+        valid("bnftClaimNoteTypeCd",this.bnftClaimNoteTypeCd);
+        valid("caseId",this.caseId);
+        valid("modifdDt",this.modifdDt);
+        valid("dcmntTxt",this.dcmntTxt);
+        if (!isValid(this.modifdDt)) this.modifdDt = now();
+    }
 }

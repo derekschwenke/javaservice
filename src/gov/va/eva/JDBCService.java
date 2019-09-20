@@ -16,10 +16,10 @@ public class JDBCService {
         Statement query = null;
         ResultSet resultSet = null;
         javaService = service;
-        String jdbc_url = config.getString("jdbc-url");
+        String jdbc_url = config.getString("jdbc-url"); // bug - This only checks once, must restart to change
 
         if ( jdbc_url.length() < 2) {
-            javaService.log( "Empty jdbc-url supplied in eVA.config file, no jdbc server." );
+            javaService.log( "Empty jdbc-url supplied in eVA.config file. No jdbc server available." );
             return;
         }
         try {
@@ -70,10 +70,10 @@ public class JDBCService {
 
     }
 
-    /*  This stored procedure is never called */
+    /*  This could be called by Oracle someday.  */
     public static void insertCaseNote(int caseDcmntId) throws SQLException {
         javaService.log("STORED PROCEDURE HAS BEEN WAS CALLED caseDcmntId = " + caseDcmntId);
-        CaseNote note = new CaseNote(String.valueOf(caseDcmntId), "TYPE", "4000", "4000", "dcmntTxt for the case note.");
+        CaseNote note = new CaseNote(String.valueOf(caseDcmntId), "TYPE", "4000", "4000", "dcmntTxt for gov.va.eva.JDBCService.insertCaseNote( int ) ");
         javaService.log(note.toString());
         javaService.receive(note);
         if (note.error != null) {

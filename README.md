@@ -8,7 +8,7 @@ This service bridges between the IN process e-VA tables and the BGS service.
 Input:
 - JDBC PL-SQL triggers on case note changes 
 - Configuration file _eva.config_ 
-- Soap template file _template_update.xml_
+- Soap template file _template.xml_
 - Optional _test/response.xml_
 - Optional _test/case_notes.xml_
       
@@ -33,13 +33,14 @@ Requirements:
 - Oracle 11g 
 - ojdbc (ojdbc8.jar)
 
-Notes for running this version 
-- File config.txt renamed eVA.config
-- File eva.log renamed eVA.dat
+Notes for version 0.7 
+- Template_update.xml renamed _template.xml_
+- File _config.txt_ renamed _eVA.config_
+- File _eva.log_ renamed _eVA.dat_
 - eVA.config names changed:
-   - log-to-console:on  replaces log-console
-   - log-to-file:on     replaces log-file
-   - log-dcmntTxt-length:40  NEW
+   - _log-to-console:on_  replaces log-console
+   - _log-to-file:on_     replaces log-file
+   - _log-dcmntTxt-length:40_  is new
 
 
 - The new _test/response.xml_ file allows you to use or bypass BGS as needed.  To use BGS, rename this file
@@ -51,11 +52,11 @@ Copy these files that are not in the .jar file:
 - _eVA.config_
 - _test/case_nates.txt_
 - _test/response.xml_ to bypass BGS
-- _template_update.xml_ full version
+- _template.xml_ full version
 
-To Build:
+To build from source:
 
-   javac src\gov\va\eva\*.java 
+   javac src\gov\va\eva\\*.java 
 
 
 JavaService Command Line
@@ -67,37 +68,48 @@ NAME
 
 SYNOPSIS
 
-    java -cp "./src" or "(ojdbc8.jar : javaservice.jar)" gov.va.eva.JavaService [...] 
+    java -cp "./ojdbc6.jar:./JavaService.jar" gov.va.eva.JavaService [...] 
+    
+Setting Java Classpath
 
+In the classpath string on Unix one ":" separates two paths (On Windows ";" separates two paths)  
+Some shells use "./" for the current directory. Alternatively use all jars in a directory:
+
+    java -cp "./*" gov.va.eva.JavaService
 
 HOW TO RUN: (tbd)
-1. Ask for the full template_update.xml from derek.
+1. Ask for the full template.xml from derek.
 1. Start BGS server
 1. Start Oracle server
 1. Start JavaService 
 
-INPUT: _template_update.xml_ omitted for security
+INPUT: _template.xml_ omitted for security
+
+INPUT: _eVA.config_
+
+    This file controls the operation. 
+    - tbd 1
 
 INPUT: _test/case_notes.txt_
 
     1001 CatA 1002 29-AUG-19 The first Case Note one
     2002 CatA 2002 29-AUG-19 The second Case Note
-    ""   CatA 3002 29-AUG-19 The third Case Note    
+    ''   CatA 3002 29-AUG-19 The third Case Note    
 
 OUTPUT: _console_
 
     2019 08 29 21:24:48 Java Service version 0.5 starts. configuration version 0.5
-    2019 08 29 21:24:48 Empty jdbc-url supplied in config.txt file, no jdbc server.
+    2019 08 29 21:24:48 Empty jdbc-url supplied in eVA.config file, no jdbc server.
     2019 08 29 21:24:48 CaseNote 1001 CatA 1002 29-AUG-19 The first Case Note one 
     2019 08 29 21:24:48 CaseNote 2002 CatA 2002 29-AUG-19 The second Case Note 
     2019 08 29 21:24:48 CaseNote  CatA 3002 29-AUG-19 The third Case Note 
 
 Process finished with exit code 0
     
-OUTPUT: _eVA.log_
+OUTPUT: _eVA.dat_
 
     2019 08 29 21:24:48 Java Service version 0.5 starts. configuration version 0.5
-    2019 08 29 21:24:48 Empty jdbc-url supplied in config.txt file, no jdbc server.
+    2019 08 29 21:24:48 Empty jdbc-url supplied in eVA.config file, no jdbc server.
     2019 08 29 21:24:48 CaseNote 1001 CatA 1002 29-AUG-19 The first Case Note one 
     2019 08 29 21:24:48 CaseNote 2002 CatA 2002 29-AUG-19 The second Case Note 
     2019 08 29 21:24:48 CaseNote  CatA 3002 29-AUG-19 The third Case Note 
@@ -114,14 +126,25 @@ DESCRIPTION
         4. send BGS Ready to JDBC
         5. Loop wait for JDBC updates to send to BGS
 
+
+Setting Java Classpath
+In the classpath string on Unix one ":" separates two paths (On Windows ";" separates two paths).
+Some shells use "./" for the current directory. 
+
+java -cp "./ojdbc6.jar:./JavaService.jar" gov.va.eva.JavaService
+
+Or load all jars in a directory:
+
+java -cp "./*" gov.va.eva.JavaService
+
+
     
 
 Development plans
 =================
-The java implementation will be developed in sprints that add functions.
-TBD
+The java implementation is developed in sprints that add functions.
 
-Task Backlog:
+Task List and Backlog:
 
         Build auto configuration code [C]
         Build Java Service logging functions [C]
@@ -129,10 +152,9 @@ Task Backlog:
         Add JDBCServer initialization code and runtime code [F]
         Construct CaseNotes from JDBC calls [F]
         Rate limit the CaseNote production by JDBC server [F]
-        Build soap messages from CaseNotes.[T]
-        Send soap messages to file for testing, read the response.[T]
-        Send soap messages to mocked BGS server using WSDL [N]
-        Send soap messages to BGS server [F]
+        Build soap messages from CaseNotes.[C]
+        Send soap messages to file for testing, read the response.[C]
+        Send soap messages to BGS server [C]
         Log PL/SQL and BGS error status [F]
         Build PL/SQL error processor [F]
         Report BGS errors to PL/SQL [F]
@@ -142,10 +164,11 @@ Task Backlog:
         
         Other & dependencies
         Resolve problems in the specs.[C]
-        Decide if Java Services should be stateless or have a persistent queue.[N]
-        If required, build and test the persistent queue in each state.[F]
-        Get PIV-GFE network access [F]
+        Decide if Java Services should be stateless or have a persistent queue.[C]
+        If required, build and test the persistent queue in each state.[C]
         Set up the cloud environment  [F]
+        Run in development [N]
+        Run in production [F]
         
         Key:
         [C] Completed/Done
