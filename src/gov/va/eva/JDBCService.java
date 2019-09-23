@@ -23,6 +23,9 @@ public class JDBCService {
             return;
         }
         try {
+            if (config.getBool("jdbc-test")) call_balance();
+
+
             // Step 1 - Register Oracle JDBC Driver
             Class.forName("oracle.jdbc.driver.OracleDriver");
 
@@ -62,6 +65,8 @@ public class JDBCService {
                 sqlException.printStackTrace();
             }
         }
+
+
     }
 
     /*  Poll the database case note table for changes. */
@@ -80,6 +85,18 @@ public class JDBCService {
             throw new SQLException("JavaService Reported Error");
         }
     }
+
+    /*  This could call PLSQL someday.  */
+    public void call_balance() throws SQLException {
+        javaService.log("About to call_balance " );
+        CallableStatement cstmt = conn.prepareCall(config.getString("jdbc-procedure"));
+        cstmt.registerOutParameter(1, Types.FLOAT );
+        cstmt.setInt(2, 101 );
+        cstmt.executeUpdate();
+        float bal = cstmt.getFloat(1);
+        javaService.log("call_balance returned the value "+ bal );
+    }
+
 
 
     /* Start with this oracle 18 example

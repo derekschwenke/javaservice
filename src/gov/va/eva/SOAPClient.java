@@ -37,7 +37,10 @@ public class SOAPClient {
         wr.close();
 
         String responseStatus = con.getResponseMessage(); // "OK" or not
-        javaService.log("BGS send status: " + responseStatus);  // Delete this line
+        if (!responseStatus.equalsIgnoreCase("OK")) {
+            javaService.log("Wrong BGS status: " + responseStatus);  // Delete this line
+            note.setError("Wrong BGS status: " + responseStatus);
+        }
 
         BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
         StringBuilder response = new StringBuilder();

@@ -66,16 +66,17 @@ class CaseNote {
         }
     }
 
-    private String encode(String s) {
+    private String xml_escape(String s) {
         s = s.replaceAll("&", "&amp;");
         s = s.replaceAll("<", "&lt;");
         s = s.replaceAll(">", "&gt;");
+        s = s.replaceAll("'", "&apos;");
         s = s.replaceAll("\"", "&quot;");
         return s;
     }
 
     private String tag(String tag, String value) {
-        return ("\n<" + tag + ">" + encode(value) + "</" + tag + ">");
+        return ("\n<" + tag + ">" + xml_escape(value) + "</" + tag + ">");
     }
 
     String toCaseDcmntDTO() {  // Note JAXB Marshaller
@@ -93,7 +94,7 @@ class CaseNote {
     private boolean isValid(String s) {return ((s != null) & (s.length() > 0));}
 
     private void valid(String f,String v) {
-        if (!isValid(v)) this.setError( "Exception " + f );
+        if (!isValid(v)) this.setError( "Exception invalid " + f + " value");
     }
 
     private String now() {
