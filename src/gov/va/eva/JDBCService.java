@@ -94,15 +94,16 @@ public class JDBCService {
     /*  This could call PLSQL someday.  */
     public void call_balance() throws SQLException {
         String pro = config.getString("jdbc-procedure");
-        javaService.log("About to prepareCall balance " + pro );
+        javaService.log("About to prepareCall " + pro );
         CallableStatement cstmt = conn.prepareCall(pro);
-        javaService.log("After to prepareCall balance " + pro );
-
-        cstmt.registerOutParameter(1, Types.FLOAT );
-        cstmt.setInt(2, 101 );
+        javaService.log("After prepareCall " + pro );
+        cstmt.registerOutParameter(1, Types.INTEGER );
+        javaService.log("About to setInt() " );
+        cstmt.setInt(2, 10000 );
+        javaService.log("About to executeUpdate() " );
         cstmt.executeUpdate();
-        float bal = cstmt.getFloat(1);
-        javaService.log("call_balance returned the value "+ bal );
+        float value = cstmt.getInt(1);
+        javaService.log("jdbc-procedure returned the value "+ value );
     }
 
 
