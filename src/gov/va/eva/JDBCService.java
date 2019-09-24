@@ -23,8 +23,6 @@ public class JDBCService {
             return;
         }
         try {
-            if (config.getBool("jdbc-test")) call_balance();
-
 
             // Step 1 - Register Oracle JDBC Driver
             Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -32,6 +30,11 @@ public class JDBCService {
             // Step 2 - Creating Oracle Connection Object  jdbc:oracle:thin:@//<host>:<port>/<service_name> see https://razorsql.com/articles/oracle_jdbc_connect.html
             conn = DriverManager.getConnection(jdbc_url, config.getString("jdbc-user"), config.getString("jdbc-password"));
             System.out.println("Connected With Oracle is" + (conn != null));
+
+            if (config.getBool("jdbc-test")) {
+                call_balance();
+                return;
+            }
 
             // Step 3 - Creating Oracle Statement Object
             query = conn.createStatement();
@@ -41,8 +44,10 @@ public class JDBCService {
 
             // Step 5 - Read results
             while (resultSet.next()) {
-                System.out.println(resultSet.getInt(1) + ", " + resultSet.getString(2) + ", " + resultSet.getFloat(3) + "$");
+                System.out.println("About to call resultSet.getInt() ");
                 int id = resultSet.getInt(1);
+                System.out.println("After resultSet.getInt()  " + id);
+
                 CaseNote note = new CaseNote(String.valueOf(id), "TYPE", "5000", "5000", "dcmntTxt for the case note.");
                 javaService.log("JDBC read "+ note.toString());
                 javaService.receive(note);
@@ -88,8 +93,11 @@ public class JDBCService {
 
     /*  This could call PLSQL someday.  */
     public void call_balance() throws SQLException {
-        javaService.log("About to call_balance " );
-        CallableStatement cstmt = conn.prepareCall(config.getString("jdbc-procedure"));
+        String pro = config.getString("jdbc-procedure");
+        javaService.log("About to prepareCall balance " + pro );
+        CallableStatement cstmt = conn.prepareCall(pro);
+        javaService.log("After to prepareCall balance " + pro );
+
         cstmt.registerOutParameter(1, Types.FLOAT );
         cstmt.setInt(2, 101 );
         cstmt.executeUpdate();
