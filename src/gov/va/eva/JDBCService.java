@@ -29,7 +29,7 @@ public class JDBCService {
 
             // Step 2 - Creating Oracle Connection Object  jdbc:oracle:thin:@//<host>:<port>/<service_name> see https://razorsql.com/articles/oracle_jdbc_connect.html
             conn = DriverManager.getConnection(jdbc_url, config.getString("jdbc-user"), config.getString("jdbc-password"));
-            System.out.println("Connected With Oracle is" + (conn != null));
+            javaService.log("Connected With Oracle is " + (conn != null));
 
             if (config.getBool("jdbc-test")) {
                 call_balance();
@@ -97,12 +97,13 @@ public class JDBCService {
         javaService.log("About to prepareCall " + pro );
         CallableStatement cstmt = conn.prepareCall(pro);
         javaService.log("After prepareCall " + pro );
-        cstmt.registerOutParameter(1, Types.INTEGER );
+        cstmt.registerOutParameter(1, Types.FLOAT );
         javaService.log("About to setInt() " );
         cstmt.setInt(2, 10000 );
         javaService.log("About to executeUpdate() " );
         cstmt.executeUpdate();
-        float value = cstmt.getInt(1);
+        javaService.log("About to getFloat() " );
+        float value = cstmt.getFloat(1);
         javaService.log("jdbc-procedure returned the value "+ value );
     }
 
