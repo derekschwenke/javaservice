@@ -22,8 +22,14 @@ public class JDBCService {
             javaService.log( "Empty jdbc-url supplied in eVA.config file. No jdbc server available." );
             return;
         }
-        try {
 
+        // Get record
+        // Validate - correct
+        // Check corpDB
+        // insert or update
+
+
+        try {
             // Step 1 - Register Oracle JDBC Driver
             Class.forName("oracle.jdbc.driver.OracleDriver");
 
@@ -31,10 +37,7 @@ public class JDBCService {
             conn = DriverManager.getConnection(jdbc_url, config.getString("jdbc-user"), config.getString("jdbc-password"));
             javaService.log("Connected With Oracle is " + (conn != null));
 
-            if (config.getBool("jdbc-test")) {
-                call_balance();
-                return;
-            }
+            // if (config.isValid("jdbc-test")) { call_balance(); return; }
 
             // Step 3 - Creating Oracle Statement Object
             query = conn.createStatement();
@@ -53,6 +56,13 @@ public class JDBCService {
                 javaService.receive(note);
                 // check note.error here
             }
+
+            if (config.isValid("jdbc-update")) {
+                query.close();
+                query = conn.createStatement();
+                query.executeUpdate(config.getString("jdbc-update"));
+            }
+
         } catch (Exception sqlException) {
             sqlException.printStackTrace();
         } finally {
@@ -80,9 +90,9 @@ public class JDBCService {
 
     }
 
-    /*  This could be called by Oracle someday.  */
+    /*  This could be called by Oracle someday. gov.va.eva.JDBCService.insertCaseNote( int )  */
     public static void insertCaseNote(int caseDcmntId) throws SQLException {
-        javaService.log("STORED PROCEDURE HAS BEEN WAS CALLED caseDcmntId = " + caseDcmntId);
+        javaService.log("INSERTCASENOTE PROCEDURE HAS BEEN WAS CALLED caseDcmntId = " + caseDcmntId);
         CaseNote note = new CaseNote(String.valueOf(caseDcmntId), "TYPE", "4000", "4000", "dcmntTxt for gov.va.eva.JDBCService.insertCaseNote( int ) ");
         javaService.log(note.toString());
         javaService.receive(note);

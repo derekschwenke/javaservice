@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 /*
-        This class automatically reloads the configuration after the  file changes. See also JavaWatch and nio.
+        This class automatically reloads the configuration after each file change. Similar to JavaWatch and nio.
         This class extends Object and not Properties to discourage unchecked direct calls that are part of the API. (style)
 */
 
@@ -65,4 +65,5 @@ public class Configuration {
         return Integer.valueOf(getString(key));
     }
     Boolean getBool(String key) { return getString(key).equalsIgnoreCase("on"); }
+    Boolean isValid(String key) { return (getString(key).length() > 0); }
 }
