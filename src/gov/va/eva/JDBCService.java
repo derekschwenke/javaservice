@@ -1,10 +1,9 @@
 package gov.va.eva;
 
 import java.sql.*;
-// note to Aad to IDE : Left click JavaService, and Open Module Settings F4, Project Structure Dialog, Projects Settings, Libraries, "+" , Java
+// note to add to IDE : Left click JavaService, and Open Module Settings F4, Project Structure Dialog, Projects Settings, Libraries, "+" , Java
 
 
-/* Example from https://examples.javacodegeeks.com/core-java/sql/jdbc-oracle-thin-driver-example/*/
 
 public class JDBCService {
     private static JavaService javaService;
@@ -14,12 +13,13 @@ public class JDBCService {
 
     public JDBCService(JavaService service) {
         Statement query = null;
+        Statement completed = null;
         ResultSet resultSet = null;
         javaService = service;
-        String jdbc_url = config.getString("jdbc-url"); // bug - This only checks once, must restart to change
+        String jdbc_url = config.getString("jdbc-url", "-node"); // bug - This only read once. Must restart.
 
-        if ( jdbc_url.length() < 2) {
-            javaService.log( "Empty jdbc-url supplied in eVA.config file. No jdbc server available." );
+        if (jdbc_url.length() < 2) {
+            javaService.log("Empty jdbc-url supplied in eVA.config file. No jdbc server available.");
             return;
         }
 
@@ -34,39 +34,55 @@ public class JDBCService {
             Class.forName("oracle.jdbc.driver.OracleDriver");
 
             // Step 2 - Creating Oracle Connection Object  jdbc:oracle:thin:@//<host>:<port>/<service_name> see https://razorsql.com/articles/oracle_jdbc_connect.html
-            conn = DriverManager.getConnection(jdbc_url, config.getString("jdbc-user"), config.getString("jdbc-password"));
+            conn = DriverManager.getConnection(jdbc_url, config.getString("jdbc-user", "-node"), config.getString("jdbc-password", "-node"));
             javaService.log("Connected With Oracle is " + (conn != null));
 
-            // if (config.isValid("jdbc-test")) { call_balance(); return; }
+            if (config.isValid("jdbc-test")) {
+                call_balance();
+                return;
+            }
 
             // Step 3 - Creating Oracle Statement Object
             query = conn.createStatement();
 
             // Step 4 - Execute SQL Query
-            resultSet = query.executeQuery(config.getString("jdbc-query"));
+            resultSet = query.executeQuery(config.getString("jdbc-query", "-node")); // not node
 
             // Step 5 - Read results
             while (resultSet.next()) {
                 System.out.println("About to call resultSet.getInt() ");
-                int id = resultSet.getInt(1);
-                System.out.println("After resultSet.getInt()  " + id);
+                String id = String.valueOf(resultSet.getInt(1));
+                System.out.println("After resultSet.getInt()  id=" + id);
 
-                CaseNote note = new CaseNote(String.valueOf(id), "TYPE", "5000", "5000", "dcmntTxt for the case note.");
-                javaService.log("JDBC read "+ note.toString());
+                CaseNote note = new CaseNote(id, "TYPE", "5000", "5000", "dcmntTxt for the case note.");
+                javaService.log("JDBC read " + note.toString());
                 javaService.receive(note);
-                // check note.error here
+
+                if (completed != null) completed.close();
+                completed = conn.createStatement();
+                String comp = config.getString("jdbc-completed"); // Or read file.
+                comp = comp.replace("<ID>", id);
+                comp = comp.replace("<STATUS>", (note.error == null) ? "OK" : "ERROR");
+                completed.executeUpdate(comp);
+
+                // if (note.error != null) { throw new SQLException("JavaService Reported Error"); } DELETE THIS
             }
 
             if (config.isValid("jdbc-update")) {
                 query.close();
                 query = conn.createStatement();
-                query.executeUpdate(config.getString("jdbc-update"));
+                System.out.println("About to call jdbc-update " + config.getString("jdbc-update", "-node"));
+                query.executeUpdate(config.getString("jdbc-update", "-node"));
+                System.out.println("Done jdbc-update");
             }
 
         } catch (Exception sqlException) {
             sqlException.printStackTrace();
         } finally {
             try {
+                if (completed != null) {
+                    completed.close();
+                }
                 if (resultSet != null) {
                     resultSet.close();
                 }
@@ -104,60 +120,21 @@ public class JDBCService {
     /*  This could call PLSQL someday.  */
     public void call_balance() throws SQLException {
         String pro = config.getString("jdbc-procedure");
-        javaService.log("About to prepareCall " + pro );
-        CallableStatement cstmt = conn.prepareCall(pro);
-        javaService.log("After prepareCall " + pro );
-        cstmt.registerOutParameter(1, Types.FLOAT );
-        javaService.log("About to setInt() " );
-        cstmt.setInt(2, 10000 );
-        javaService.log("About to executeUpdate() " );
-        cstmt.executeUpdate();
-        javaService.log("About to getFloat() " );
-        float value = cstmt.getFloat(1);
-        javaService.log("jdbc-procedure returned the value "+ value );
-    }
-
-
-
-    /* Start with this oracle 18 example
-//https://docs.oracle.com/en/database/oracle/oracle-database/18/jjdev/calling-Java-from-database-triggers.html#GUID-5C498DEF-0348-484D-AA26-2A88EF348D5C
-//https://docs.oracle.com/javase/tutorial/jdbc/basics/index.html
-
-
-class JDBCService_18 {
-    private static JavaService javaService;
-
-    public JDBCService_18(JavaService service) {
-        javaService = service;
-    }
-
-    public static void insertCaseNote(int caseDcmntId) throws SQLException {
-        javaService.log("STORED PROCEDURE HAS BEEN WAS CALLED caseDcmntId = " + caseDcmntId);
-        CaseNote note = new CaseNote(String.valueOf(caseDcmntId), "TYPE", "4000", "4000", "dcmntTxt for the case note.");
-        javaService.log(note.toString());
-        javaService.receive(note);
-        if (note.hasError) {
-            throw new SQLException("JavaService Reported Error");
-        }
+        javaService.log("About to prepareCall " + pro);
+        CallableStatement statement = conn.prepareCall(pro);
+        javaService.log("After prepareCall " + pro);
+        statement.registerOutParameter(1, Types.FLOAT);
+        javaService.log("About to setInt() ");
+        statement.setInt(2, 10000);
+        javaService.log("About to executeUpdate() ");
+        statement.executeUpdate();
+        javaService.log("About to getFloat() ");
+        float value = statement.getFloat(1);
+        javaService.log("jdbc-procedure returned the value " + value);
     }
 }
 
-
-CREATE OR REPLACE PROCEDURE insert_case_note (
- emp_id NUMBER
-)
-AS LANGUAGE JAVA
-NAME 'JDBCService.insertCaseNote(int)';
-
-Finally, create the database trigger, which fires on any update:
-
-CREATE OR REPLACE TRIGGER cn_trig
-AFTER UPDATE ON employees
-FOR EACH ROW
-CALL insert_case_note(:new.employee_id);
-
-*/
-
-
-}
+    // Example from https://examples.javacodegeeks.com/core-java/sql/jdbc-oracle-thin-driver-example/
+    //https://docs.oracle.com/en/database/oracle/oracle-database/18/jjdev/calling-Java-from-database-triggers.html#GUID-5C498DEF-0348-484D-AA26-2A88EF348D5C
+    //https://docs.oracle.com/javase/tutorial/jdbc/basics/index.html
 

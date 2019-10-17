@@ -15,7 +15,7 @@ public class SOAPClient {
     private static final String in_fn = "test/case_notes.txt";
     private final Configuration config = Configuration.get();
 
-    private boolean useBGS() { return(config.getString("bgs-url").length() > 1); }
+    private boolean useBGS() { return(config.isValid("bgs-url", "-node")); }
 
     public SOAPClient(JavaService service) {
         javaService = service;
@@ -26,7 +26,7 @@ public class SOAPClient {
 
 
     private void sendToBGS(CaseNote note, String request) throws IOException {
-        URL url = new URL(config.getString("bgs-url"));
+        URL url = new URL(config.getString("bgs-url","-node"));
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("POST");
         con.setRequestProperty("Content-Type", "text/xml; charset=utf-8");

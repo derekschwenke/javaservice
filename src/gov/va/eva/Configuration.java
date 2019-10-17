@@ -54,6 +54,7 @@ public class Configuration {
         }
     }
 
+
     String getString(String key) {
         check();
         String value = properties.getProperty(key);
@@ -61,9 +62,9 @@ public class Configuration {
         return value;
     }
 
-    Integer getInt(String key) {
-        return Integer.valueOf(getString(key));
-    }
+    String getString(String key, String suffix) { return (getString(key + "-" + getString(suffix.substring(1)))); }
+    Integer getInt(String key) { return Integer.valueOf(getString(key)); }
     Boolean getBool(String key) { return getString(key).equalsIgnoreCase("on"); }
     Boolean isValid(String key) { return (getString(key).length() > 0); }
+    Boolean isValid(String key, String suffix) { return (getString(key, suffix).length() > 0); }
 }
