@@ -1,8 +1,6 @@
 package gov.va.eva;
 
 import java.sql.*;
-// note to add to IDE : Left click JavaService, and Open Module Settings F4, Project Structure Dialog, Projects Settings, Libraries, "+" , Java
-
 
 
 public class JDBCService {
@@ -19,7 +17,7 @@ public class JDBCService {
         String jdbc_url = config.getString("jdbc-url", "-node"); // bug - This only read once. Must restart.
 
         if (jdbc_url.length() < 2) {
-            javaService.log("Empty jdbc-url supplied in eVA.config file. No jdbc server available.");
+            javaService.log("Empty jdbc-url supplied in eVA.config file.  No jdbc server available.");
             return;
         }
 
@@ -65,7 +63,10 @@ public class JDBCService {
                 comp = comp.replace("<STATUS>", (note.error == null) ? "OK" : "ERROR");
                 completed.executeUpdate(comp);
 
-                // if (note.error != null) { throw new SQLException("JavaService Reported Error"); } DELETE THIS
+                if (note.error != null) {
+                    System.out.println("About to call jdbc-error-report " + config.getString("jdbc-error-report"));
+                    //throw new SQLException("JavaService Reported Error");
+                }
             }
 
             if (config.isValid("jdbc-update")) {
@@ -137,4 +138,5 @@ public class JDBCService {
     // Example from https://examples.javacodegeeks.com/core-java/sql/jdbc-oracle-thin-driver-example/
     //https://docs.oracle.com/en/database/oracle/oracle-database/18/jjdev/calling-Java-from-database-triggers.html#GUID-5C498DEF-0348-484D-AA26-2A88EF348D5C
     //https://docs.oracle.com/javase/tutorial/jdbc/basics/index.html
+    // note to add to IDE : Left click JavaService, and Open Module Settings F4, Project Structure Dialog, Projects Settings, Libraries, "+" , Java
 
